@@ -2,35 +2,55 @@
 
 ## Overview
 This project is a **Smart Home System** simulation implemented in **Java**. It demonstrates **six design patterns** across multiple use-cases:
-- **Behavioral:** Observer (system → devices notifications), Command (user commands & scheduling)
-- **Creational:** Factory Method (device creation), Singleton (central Hub)
-- **Structural:** Proxy (controlled device access), Composite (groups of devices)
 
-The project meets the exercise constraints: modular code (each class in its own file), strong OOP design, logging, defensive programming, transient error handling, scheduling, dynamic device management, and sample inputs for manual testing.
+## Design Patterns Demonstrated
 
-## What you get in this ZIP
-- Complete Java source under `src/main/java/com/smarthome/...`
-- `README.md` (this file)
-- `system-diagram.png` — a simple visual diagram of the architecture
-- `run-instructions.txt` — step-by-step commands to compile & run locally
-- `git-upload-steps.txt` — exact `git` commands to create a GitHub repo and push this project
-- `smart-home-system.zip` — this archive (already produced)
+| Pattern Type   | Pattern Name     | Where/How Used                                               |
+|----------------|------------------|--------------------------------------------------------------|
+| Behavioral     | Observer         | Devices observe hub events and update state accordingly      |
+| Behavioral     | Command          | Device actions encapsulated as command objects               |
+| Creational     | Factory Method   | `DeviceFactory` creates devices by type                      |
+| Creational     | Singleton        | `SmartHomeHub` is a singleton central controller             |
+| Structural     | Proxy            | `DeviceProxy` controls access to real devices                |
+| Structural     | Composite        | `DeviceGroup` allows group operations on devices             |
 
-> **Important:** I cannot create or push a GitHub repository on your behalf. I prepared the project and the exact `git` commands (see `git-upload-steps.txt`) so you can push it to GitHub and share that link (as required).
+---
+
+## Architecture
+
+- **app/**: Entry point (`App.java`) and CLI logic.
+- **command/**: Command pattern for device actions.
+- **composite/**: Composite pattern for device groups.
+- **exceptions/**: Custom exceptions for robust error handling.
+- **factory/**: Factory for device creation.
+- **hub/**: Central hub, automation triggers, and scheduling.
+- **model/**: Device abstractions and implementations.
+- **observer/**: Observer pattern interfaces and events.
+- **proxy/**: Proxy for device access control.
+- **util/**: Logging and validation utilities.
+
+See `System-diagram.png` for a visual overview.
 
 ---
 
 ## Quick Run (Java 11+)
-1. Unzip `smart-home-system.zip` and navigate into the folder.
+
+1. Create the output folder:
+```bash
+mkdir ../../../../out
+```
 2. Compile:
 ```bash
-javac -d out $(find src/main/java -name "*.java")
+Get-ChildItem -Recurse -Filter *.java | ForEach-Object {
+    Write-Host "Compiling $($_.FullName)"
+    javac -d ../../../../out $_.FullName
+}
 ```
 3. Run:
 ```bash
-java -cp out com.smarthome.app.App
+java -cp ../../../../out com.smarthome.app.SmartHomeApp
 ```
-4. Interact via console. Type `help` to see commands; type `exit` to stop the program.
+3. Interact via console. Type `help` to see commands; type `exit` to stop the program.
 
 ---
 
@@ -46,10 +66,9 @@ java -cp out com.smarthome.app.App
    - `util` – logging, validation utilities
    - `exceptions` – custom typed exceptions
 2. **Resiliency**: `DeviceProxy` simulates transient errors and retries (exponential backoff) to demonstrate transient error handling logic.
-3. **No hard-coded `while(true)`**: console input handled by an `ExecutorService` reading lines from `Scanner` while relying on `Scanner.hasNextLine()` so the loop condition isn't a blind `true` constant; graceful shutdown uses a shutdown hook.
-4. **Concurrency**: Uses `ScheduledExecutorService` for scheduled tasks and retries; uses concurrent-safe maps for device registry.
-5. **Logging & errors**: `LoggerUtil` wraps `java.util.logging` with consistent format; exceptions are caught and logged with friendly messages; input commands are validated and errors returned to the user.
-6. **Extensibility**: Adding new device types only requires a new `Device` subclass and a `DeviceFactory` entry — minimal impact to the rest of the system.
+3. **Concurrency**: Uses `ScheduledExecutorService` for scheduled tasks and retries; uses concurrent-safe maps for device registry.
+4. **Logging & errors**: `LoggerUtil` wraps `java.util.logging` with consistent format; exceptions are caught and logged with friendly messages; input commands are validated and errors returned to the user.
+5. **Extensibility**: Adding new device types only requires a new `Device` subclass and a `DeviceFactory` entry — minimal impact to the rest of the system.
 
 ---
 
@@ -77,17 +96,5 @@ java -cp out com.smarthome.app.App
 
 ---
 
-## Git upload steps
-See `git-upload-steps.txt` included in the archive for exact steps to create a GitHub repository and push this project (you only need your GitHub account & `git` configured).
 
----
 
-## Notes & Limitations
-- This is a simulation — interactions with real hardware would require specific device drivers / network protocols. The design intentionally models extension points where real device drivers could be plugged in.
-- The scheduling uses system clock (`LocalDateTime`) and schedules the nearest occurrence of the supplied `HH:mm` time.
-- For interviews: prepare to explain tradeoffs, where you'd add persistence (e.g., save schedules/triggers to a DB), and how you'd secure device access (authentication, TLS) in a real deployment.
-
----
-Good luck — unzip and start exploring! If you want, I can also:
-- produce a ready-to-push GitHub Actions CI workflow (mvn/gradle) or
-- convert this to a Maven project with a `pom.xml`.
