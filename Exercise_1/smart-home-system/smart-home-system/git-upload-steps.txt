@@ -1,0 +1,11 @@
+# Steps to create a GitHub repo and push this project (replace <username> and <repo-name>):
+git init
+git add .
+git commit -m "Initial commit: Smart Home System (Design Patterns Demo)"
+# Create a repo on GitHub via the web UI named: smart-home-system
+# Then connect and push:
+git remote add origin https://github.com/<username>/<repo-name>.git
+git branch -M main
+git push -u origin main
+
+# Alternatively, create private repo via GitHub UI, then follow the provided commands.
